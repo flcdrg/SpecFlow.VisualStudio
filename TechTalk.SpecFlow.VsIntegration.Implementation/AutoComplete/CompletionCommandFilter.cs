@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using TechTalk.SpecFlow.IdeIntegration.Tracing;
@@ -33,6 +34,7 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.AutoComplete
 
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             bool handled = false;
             int hresult = VSConstants.S_OK;
 
@@ -85,6 +87,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.AutoComplete
 
         public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (pguidCmdGroup == VSConstants.VSStd2K)
             {
                 switch ((VSConstants.VSStd2KCmdID)prgCmds[0].cmdID)

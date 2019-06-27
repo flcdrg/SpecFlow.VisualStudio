@@ -35,6 +35,7 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Commands
         protected override void BeforeQueryStatus(OleMenuCommand command, SelectedItems selection)
         {
             base.BeforeQueryStatus(command, selection);
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             if (command.Visible)
             {
@@ -45,12 +46,16 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Commands
 
         protected override void Invoke(OleMenuCommand command, SelectedItems selection)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var activeDocument = dte.ActiveDocument;
             Invoke(activeDocument);
         }
 
         private void Invoke(Document activeDocument)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var editorContext = GherkinEditorContext.FromDocument(activeDocument, gherkinLanguageServiceFactory);
             if (editorContext == null) 
                 return;

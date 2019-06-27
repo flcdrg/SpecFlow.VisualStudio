@@ -22,6 +22,7 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
             this.tracer = tracer;
             InitNullEvents();
 
+            ThreadHelper.ThrowIfNotOnUIThread();
             fileChangeEx = Package.GetGlobalService(typeof(SVsFileChangeEx)) as IVsFileChangeEx;
         }
 
@@ -42,6 +43,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
             tracer.Trace("Start listening to file: {0}", this, file);
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             uint cookie;
             ErrorHandler.ThrowOnFailure(
                 fileChangeEx.AdviseFileChange(
@@ -54,6 +57,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public void StopListening()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (fileChangeEx != null && listenInfos.Any())
             {
                 var cookies = listenInfos.Select(i => i.Value).ToArray();

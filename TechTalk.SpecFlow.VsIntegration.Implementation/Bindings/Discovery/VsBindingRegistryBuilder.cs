@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
 using TechTalk.SpecFlow.Bindings;
 using TechTalk.SpecFlow.Bindings.Discovery;
 using TechTalk.SpecFlow.IdeIntegration.Bindings;
@@ -103,6 +104,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Bindings.Discovery
         {
             try
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 return codeClass.ProjectItem;
             }
             catch (Exception ex)
@@ -114,7 +117,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Bindings.Discovery
 
         private void ProcessCodeClass(CodeClass codeClass, IdeBindingSourceProcessor bindingSourceProcessor, params CodeClass[] classParts)
         {
-            
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var filteredAttributes = classParts
                 .SelectMany(cc => cc.Attributes.Cast<CodeAttribute2>().Where(attr => CanProcessTypeAttribute(bindingSourceProcessor, attr))).ToArray();
 
@@ -146,6 +150,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Bindings.Discovery
 
         private void ProcessCodeFunctions(CodeClass codeClass, BindingSourceType bindingSourceType, IdeBindingSourceProcessor bindingSourceProcessor)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (var codeFunction in codeClass.Children.OfType<CodeFunction>())
             {
                 var bindingSourceMethod = CreateBindingSourceMethod(codeFunction, bindingSourceType, bindingSourceProcessor);
@@ -174,6 +180,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Bindings.Discovery
         {
             try
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 var filteredAttributes = codeFunction.Attributes.Cast<CodeAttribute2>().Where(attr => bindingSourceProcessor.CanProcessTypeAttribute(attr.FullName)).ToArray();
                 return bindingReflectionFactory.CreateBindingSourceMethod(codeFunction, bindingSourceType, filteredAttributes);
             }

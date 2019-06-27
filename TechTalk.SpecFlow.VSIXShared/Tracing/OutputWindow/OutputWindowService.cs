@@ -31,6 +31,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Tracing.OutputWindow
 
         public IOutputWindowPane TryGetPane(string name)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             IOutputWindowPane pane;
             if (panes.TryGetValue(name, out pane))
                 return pane;

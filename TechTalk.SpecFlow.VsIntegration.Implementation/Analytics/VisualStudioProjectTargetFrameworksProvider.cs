@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using TechTalk.SpecFlow.IdeIntegration.Analytics;
 using TechTalk.SpecFlow.VsIntegration.Implementation.Utils;
 
@@ -18,6 +19,7 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Analytics
 
         public IEnumerable<string> GetProjectTargetFrameworks()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var dte = (DTE)_serviceProvider.GetService(typeof(DTE));
             var nonGenericProjects = dte.Solution.Projects;
             var projects = nonGenericProjects.Cast<Project>();

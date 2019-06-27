@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using TechTalk.SpecFlow.Bindings;
 using TechTalk.SpecFlow.IdeIntegration.Tracing;
@@ -33,6 +34,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.AutoComplete
         {
             if (disposed)
                 throw new ObjectDisposedException("GherkinStepCompletionSource");
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             ITextSnapshot snapshot = textBuffer.CurrentSnapshot;
             var triggerPoint = session.GetTriggerPoint(snapshot);
@@ -259,6 +262,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.AutoComplete
 
         private void GetCompletionsForBindingType(StepDefinitionType stepDefinitionType, out IEnumerable<Completion> completions, out string statusText)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             statusText = null;
 
             var suggestionProvider = languageService.ProjectScope.StepSuggestionProvider;

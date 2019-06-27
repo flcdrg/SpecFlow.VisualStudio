@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
 using TechTalk.SpecFlow.Bindings.Reflection;
 using TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService;
 using TechTalk.SpecFlow.VsIntegration.Implementation.Utils;
@@ -14,6 +15,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Bindings.Discovery
 
         public CodeFunction FindCodeFunction(VsProjectScope projectScope, IBindingMethod bindingMethod)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var project = projectScope.Project;
 
             var function = FindCodeFunction(project, bindingMethod);

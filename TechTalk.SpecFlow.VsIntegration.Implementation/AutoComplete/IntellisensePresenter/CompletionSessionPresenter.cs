@@ -23,22 +23,6 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.AutoComplete.Intellisen
             this.serviceProvider = serviceProvider;
         }
 
-        internal void Navigate(string uri)
-        {
-            if (!string.IsNullOrEmpty(uri))
-            {
-                if (serviceProvider != null)
-                {
-                    DTE vs = serviceProvider.GetService(typeof(DTE)) as DTE;
-                    if (vs != null)
-                    {
-                        vs.ItemOperations.Navigate(uri, vsNavigateOptions.vsNavigateOptionsDefault);
-                    }
-                }
-            }
-
-        }
-
         private void OnSelectedCompletionSetSelectionStatusChanged(object sender, ValueChangedEventArgs<CompletionSelectionStatus> e)
         {
             if (e.NewValue != null && e.NewValue.Completion != null)
