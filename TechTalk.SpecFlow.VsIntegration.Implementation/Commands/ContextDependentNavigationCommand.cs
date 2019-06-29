@@ -1,5 +1,6 @@
 ﻿using System;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService;
 
 namespace TechTalk.SpecFlow.VsIntegration.Implementation.Commands
@@ -22,6 +23,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Commands
 
         protected override void BeforeQueryStatus(Microsoft.VisualStudio.Shell.OleMenuCommand command, SelectedItems selection)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var activeDocument = dte.ActiveDocument;
             if (activeDocument == null || activeDocument.ProjectItem == null)
             {
@@ -53,6 +56,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Commands
 
         protected override void Invoke(Microsoft.VisualStudio.Shell.OleMenuCommand command, SelectedItems selection)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var activeDocument = dte.ActiveDocument;
 
             if (IsFeatureFile(activeDocument.ProjectItem))
@@ -67,6 +72,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Commands
 
         internal static bool IsFeatureFile(ProjectItem projectItem)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return projectItem.Name.EndsWith(".feature", StringComparison.InvariantCultureIgnoreCase);
         }
     }

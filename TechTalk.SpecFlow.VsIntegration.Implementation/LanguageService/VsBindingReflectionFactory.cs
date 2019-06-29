@@ -2,6 +2,7 @@
 using System.Linq;
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
 using TechTalk.SpecFlow.Bindings.Discovery;
 using TechTalk.SpecFlow.Bindings.Reflection;
 using TechTalk.SpecFlow.VsIntegration.Implementation.Utils;
@@ -12,6 +13,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService
     {
         public BindingSourceType CreateBindingSourceType(CodeClass[] codeClasses, CodeAttribute2[] filteredAttributes)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return new BindingSourceType
                        {
                            BindingType = CreateBindingType(codeClasses.First()),
@@ -26,6 +29,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService
 
         public BindingSourceMethod CreateBindingSourceMethod(CodeFunction codeFunction, BindingSourceType bindingSourceType, CodeAttribute2[] filteredAttributes)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return new BindingSourceMethod
                        {
                            BindingMethod = CreateBindingMethod(codeFunction), 
@@ -76,6 +81,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService
 
         public IBindingType CreateBindingType(CodeTypeRef type)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (type == null)
                 return null;
 
@@ -106,11 +113,15 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService
 
         public IBindingType CreateBindingType(CodeClass codeClass)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return new BindingType(codeClass.Name, codeClass.FullName);
         }
 
         public IBindingParameter CreateBindingParameter(CodeParameter codeParameter)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return new BindingParameter(
                     CreateBindingType(codeParameter.Type), 
                     codeParameter.Name);
@@ -118,6 +129,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService
 
         public IBindingMethod CreateBindingMethod(CodeFunction codeFunction)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var parameters = codeFunction.Parameters.Cast<CodeParameter>().Select(CreateBindingParameter).ToArray();
             var type = CreateBindingType((CodeClass)codeFunction.Parent);
             var returnType = CreateBindingType(codeFunction.Type);

@@ -39,6 +39,7 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Bindings.Discovery
 
         private void ProcessBindingsFromProjectItem(ProjectItem projectItem, IdeBindingSourceProcessor bindingSourceProcessor, List<ProjectItem> relatedProjectItems)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             foreach (CodeClass codeClass in VsxHelper.GetClasses(projectItem))
             {
                 CodeClass2 bindingClassIncludingParts = codeClass as CodeClass2;
@@ -79,11 +80,14 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Bindings.Discovery
 
         private CodeClass GetBaseClass(CodeClass codeClass)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return codeClass.Bases.OfType<CodeClass>().Where(IsProcessableBaseClass).FirstOrDefault();
         }
 
         private bool IsProcessableBaseClass(CodeClass codeClass)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             try
             {
                 if (codeClass.FullName == "System.Object")

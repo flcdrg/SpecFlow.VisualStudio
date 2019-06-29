@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using TechTalk.SpecFlow.IdeIntegration.Bindings;
 using TechTalk.SpecFlow.IdeIntegration.Tracing;
 using TechTalk.SpecFlow.VsIntegration.Implementation.Bindings.Discovery;
@@ -32,6 +33,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService
 
         public override void Initialize()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var mainProject = vsProjectScope.Project;
 
             var bindingAssemblies = Enumerable.Empty<BindingAssemblyInfo>()

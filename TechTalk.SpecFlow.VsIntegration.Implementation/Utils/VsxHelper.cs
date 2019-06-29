@@ -88,6 +88,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static ProjectItem FindProjectItemByProjectRelativePath(Project project, string filePath)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var fullPath = Path.Combine(GetProjectFolder(project), filePath);
 
             var piSolutionSearch = project.DTE.Solution.FindProjectItem(fullPath);
@@ -135,6 +137,7 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
         {
             if (vs == null) throw new ArgumentNullException("vs");
             if (match == null) throw new ArgumentNullException("match");
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (Project project in vs.Solution.Projects)
             {
@@ -158,6 +161,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         private static Project FindProjectInternal(ProjectItems items, Predicate<Project> match)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (ProjectItem item in items)
             {
                 Project project = item.Object as Project;
@@ -282,6 +287,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static string GetProjectRelativePath(ProjectItem projectItem)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             bool isLink;
             if (TryGetProperty(projectItem.Properties, "IsLink", out isLink) && isLink)
             {
@@ -298,6 +305,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         private static string BuildProjectItemPath(ProjectItem projectItem)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string path = projectItem.Name;
             while (projectItem != null && 
                 projectItem.Collection != projectItem.ContainingProject.ProjectItems)
@@ -312,6 +321,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static string GetProjectRelativePath(Reference reference)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string fileName = reference.Path;
             if (fileName == null)
                 return null;
@@ -322,12 +333,15 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static string GetProjectFolder(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return Path.GetDirectoryName(project.FullName);
         }
 
         static public string GetFileContent(ProjectItem projectItem, bool loadLastSaved = false)
         {
-            
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!loadLastSaved && projectItem.IsOpen[EnvDTE.Constants.vsViewKindAny])
             {
                 TextDocument textDoc = (TextDocument)projectItem.Document.Object("TextDocument");
@@ -343,6 +357,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static bool TryGetProperty<T>(Properties props, string name, out T value)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var property = props.Cast<Property>().FirstOrDefault(p => p.Name == name);
             if (property != null)
             {
@@ -359,6 +375,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
         {
             try
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 ServiceProvider serviceProvider =
                     new ServiceProvider(project.DTE as IServiceProvider);
                 IVsSolution vsSolution = (IVsSolution)serviceProvider.GetService(typeof(SVsSolution));
@@ -436,6 +454,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         private static IEnumerable<CodeClass> GetClasses(CodeElements codeElements)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             foreach (CodeElement codeElement in codeElements)
             {
                 if (codeElement.Kind == vsCMElement.vsCMElementClass)
@@ -455,27 +475,37 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static IEnumerable<CodeFunction> GetFunctions(this CodeClass codeClass)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return codeClass.Children.OfType<CodeFunction>();
         }
 
         public static string GetProjectDefaultNamespace(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return project.Properties.Item("DefaultNamespace").Value as string;
         }
 
         public static string GetProjectAssemblyName(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return project.Properties.Item("AssemblyName").Value as string;
         }
 
         public static T ResolveMefDependency<T>(System.IServiceProvider serviceProvider) where T : class
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             IComponentModel componentModel = (IComponentModel)serviceProvider.GetService(typeof(SComponentModel));
             return componentModel.GetService<T>();
         }
 
         public static object ResolveMefDependency(System.IServiceProvider serviceProvider, Type typeToResolve)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             IComponentModel componentModel = (IComponentModel)serviceProvider.GetService(typeof(SComponentModel));
             var getServiceMethod = typeof (IComponentModel).GetMethod("GetService").MakeGenericMethod(typeToResolve);
             return getServiceMethod.Invoke(componentModel, null);
@@ -483,6 +513,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static Reference GetReference(Project project, string assemblyName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             VSProject vsProject = project.Object as VSProject;
             if (vsProject == null)
                 return null;
@@ -492,6 +524,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static bool Build(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var solutionBuild = project.DTE.Solution.SolutionBuild;
 
             solutionBuild.BuildProject(solutionBuild.ActiveConfiguration.Name, project.FullName, true);
@@ -523,6 +557,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static Project GetProject(IVsHierarchy hierarchy)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             object project;
             ErrorHandler.ThrowOnFailure(hierarchy.GetProperty(
                 VSConstants.VSITEMID_ROOT,
@@ -534,6 +570,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static IVsHierarchy GetHierarchy(System.IServiceProvider serviceProvider, Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var solution = serviceProvider.GetService(typeof (SVsSolution)) as IVsSolution;
             if (solution == null)
                 return null;
@@ -544,6 +582,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static Reference GetReferenceByProjectRelativePath(Project project, string projectRelativePath)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             VSProject vsProject = project.Object as VSProject;
             if (vsProject == null)
                 return null;
@@ -554,6 +594,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static IVsTextView GetActiveIVsTextView()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             //see also: http://stackoverflow.com/questions/2413530/find-an-ivstextview-or-iwpftextview-for-a-given-projectitem-in-vs-2010-rc-exten
 
             IVsTextManager textManager = (IVsTextManager)Package.GetGlobalService(typeof(SVsTextManager));
@@ -566,6 +608,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static IVsTextView GetIVsTextView(Document activeDocument)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (activeDocument == null)
                 return null;
             return GetIVsTextView(activeDocument.DTE, activeDocument.FullName);
@@ -573,6 +617,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static IVsTextView GetIVsTextView(DTE dte, string filePath)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             ServiceProvider serviceProvider = new ServiceProvider((IServiceProvider)dte);
 
             IVsUIHierarchy uiHierarchy;
@@ -588,6 +634,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Utils
 
         public static IWpfTextView GetWpfTextView(IVsTextView vTextView)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             IVsUserData userData = vTextView as IVsUserData;
             if (userData == null)
                 return null;

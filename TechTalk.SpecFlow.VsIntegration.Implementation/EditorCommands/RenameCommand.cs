@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using EnvDTE;
 using Microsoft.VisualBasic;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using TechTalk.SpecFlow.Bindings;
 using TechTalk.SpecFlow.Bindings.Reflection;
@@ -38,6 +39,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.EditorCommands
             var stepBinding = GetSingleStepDefinitionBinding(editorContext, step);
             if (stepBinding == null)
                 return false;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             var codeFunction = FindBindingMethodCodeFunction(editorContext, stepBinding);
             if (codeFunction == null)
@@ -71,6 +74,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.EditorCommands
 
         private IEnumerable<StepInstanceWithProjectScope> FindAllStepMatchingStepInstances(Document document, IBindingMethod bindingMethod)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var projectScopes = GetProjectScopes(document).ToArray();
             if (projectScopes.Any(ps => !ps.StepSuggestionProvider.Populated))
             {
@@ -129,6 +134,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.EditorCommands
 
         private IEnumerable<VsProjectScope> GetProjectScopes(Document activeDocument)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var projectScopes = _projectScopeFactory.GetProjectScopesFromBindingProject(activeDocument.ProjectItem.ContainingProject);
             return projectScopes.OfType<VsProjectScope>();
         }
@@ -170,11 +177,15 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.EditorCommands
 
         private static CodeFunction FindBindingMethodCodeFunction(GherkinEditorContext editorContext, IStepDefinitionBinding binding)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return new VsBindingMethodLocator().FindCodeFunction(((VsProjectScope)editorContext.ProjectScope), binding.Method);
         }
 
         private void ReplaceStepBindingAttribute(CodeFunction codeFunction, IStepDefinitionBinding binding, string newRegex)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!codeFunction.ProjectItem.IsOpen)
             {
                 codeFunction.ProjectItem.Open();

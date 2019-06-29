@@ -18,6 +18,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Commands
 
         protected override void Invoke(OleMenuCommand command, SelectedItems selection)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var selectedItem = selection.Item(1);
             if (selectedItem.Project == null)
                 return;

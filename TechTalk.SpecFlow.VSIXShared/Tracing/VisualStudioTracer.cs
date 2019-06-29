@@ -129,6 +129,7 @@ namespace TechTalk.SpecFlow.VsIntegration.Tracing
                 return;
 
             DateTime now = DateTime.Now;
+
             dispatcher.BeginInvoke(new Action(() =>
                 {
                     var outputWindow =

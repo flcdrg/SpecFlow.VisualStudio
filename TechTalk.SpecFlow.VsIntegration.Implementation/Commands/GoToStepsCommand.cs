@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using TechTalk.SpecFlow.Bindings.Reflection;
 using TechTalk.SpecFlow.IdeIntegration.Tracing;
 using TechTalk.SpecFlow.VsIntegration.Implementation.Bindings.Discovery;
@@ -74,6 +75,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Commands
 
         private void JumpToStep(StepInstanceWithProjectScope stepInstanceWithProjectScope)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var position = ((ISourceFilePosition)stepInstanceWithProjectScope.StepInstance);
             var featureProjItem = VsxHelper.GetAllPhysicalFileProjectItem(stepInstanceWithProjectScope.ProjectScope.Project).FirstOrDefault(
                 pi => VsxHelper.GetProjectRelativePath(pi).Equals(position.SourceFile));
@@ -88,6 +91,7 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Commands
 
         private static void GoToLine(ProjectItem projectItem, int line)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             TextDocument codeBehindTextDocument = (TextDocument) projectItem.Document.Object("TextDocument");
 
             EditPoint navigatePoint = codeBehindTextDocument.StartPoint.CreateEditPoint();
@@ -98,6 +102,7 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Commands
         
         private IEnumerable<VsProjectScope> GetProjectScopes(Document activeDocument)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var projectScopes = projectScopeFactory.GetProjectScopesFromBindingProject(activeDocument.ProjectItem.ContainingProject);
             return projectScopes.OfType<VsProjectScope>();
         }
@@ -113,6 +118,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Commands
 
         private bool IsStepDefinition(IBindingMethod bindingMethod, Document activeDocument)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var vsBindingRegistryBuilder = new VsBindingRegistryBuilder(tracer);
             var stepDefinitionBinding = vsBindingRegistryBuilder.GetBindingsFromProjectItem(activeDocument.ProjectItem).FirstOrDefault(sdb => sdb.Method.MethodEquals(bindingMethod));
             return stepDefinitionBinding != null;

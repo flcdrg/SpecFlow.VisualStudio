@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using TechTalk.SpecFlow.Generator;
 using TechTalk.SpecFlow.Generator.Interfaces;
 using TechTalk.SpecFlow.IdeIntegration.Configuration;
@@ -33,6 +34,7 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Generator
         protected override ProjectSettings LoadProjectSettings()
         {
             tracer.Trace("Discover project settings", "VsGeneratorServices");
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             ProjectPlatformSettings projectPlatformSettings;
             var tergetLanguage = VsProjectScope.GetTargetLanguage(project);

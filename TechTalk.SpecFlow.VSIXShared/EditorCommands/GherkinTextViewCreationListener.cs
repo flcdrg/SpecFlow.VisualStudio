@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Utilities;
@@ -48,12 +49,15 @@ namespace TechTalk.SpecFlow.VsIntegration.EditorCommands
                     prgCmds[0].cmdf = (uint)OLECMDF.OLECMDF_ENABLED | (uint)OLECMDF.OLECMDF_SUPPORTED;
                     return VSConstants.S_OK;
                 }
+                ThreadHelper.ThrowIfNotOnUIThread();
 
                 return Next.QueryStatus(pguidCmdGroup, cCmds, prgCmds, pCmdText);
             }
 
             public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 int hresult = VSConstants.S_OK;
                 if (!commandFilter.PreExec(editorContext, pguidCmdGroup, nCmdID))
                     hresult = Next.Exec(pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);

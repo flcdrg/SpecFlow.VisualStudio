@@ -28,6 +28,7 @@ namespace TechTalk.SpecFlow.VsIntegration
 
         protected override Func<GeneratorServices> GeneratorServicesProvider(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             IVisualStudioTracer tracer = VsxHelper.ResolveMefDependency<IVisualStudioTracer>(ServiceProvider.GlobalProvider);
             IntegrationOptionsProvider = VsxHelper.ResolveMefDependency<IIntegrationOptionsProvider>(ServiceProvider.GlobalProvider);
             return () => new VsGeneratorServices(project, new VsSpecFlowConfigurationReader(project, tracer), tracer, IntegrationOptionsProvider);

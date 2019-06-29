@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using TechTalk.SpecFlow.Bindings;
 using TechTalk.SpecFlow.Bindings.Reflection;
 using TechTalk.SpecFlow.IdeIntegration.Configuration;
@@ -137,6 +138,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService
 
         private void EnsureInitialized()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!_initialized)
             {
                 lock(this)
@@ -246,6 +249,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService
 
         private void Initialize()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             _tracer.Trace("Initializing...", VsProjectScopeTraceCategory);
             try
             {
@@ -516,6 +521,7 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService
             {
                 return;
             }
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             var stepMap = StepMap.LoadFromFile(fileName, _tracer);
             if (stepMap != null)
@@ -531,11 +537,15 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService
 
         public static bool IsProjectSupported(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             return GetTargetLanguage(project) != ProgrammingLanguage.Other;
         }
 
         public static ProgrammingLanguage GetTargetLanguage(Project project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (project.FullName.EndsWith(".csproj", StringComparison.InvariantCultureIgnoreCase))
             {
                 return ProgrammingLanguage.CSharp;
@@ -562,6 +572,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.LanguageService
 
         public static ProgrammingLanguage GetCodeFileLanguage(ProjectItem projectItem)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string name = projectItem.Name;
             if (name.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase))
             {

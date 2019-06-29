@@ -3,6 +3,7 @@ using EnvDTE;
 using TechTalk.SpecFlow.IdeIntegration.Install;
 using Window = EnvDTE.Window;
 using Timer = System.Windows.Forms.Timer;
+using Microsoft.VisualStudio.Shell;
 
 namespace TechTalk.SpecFlow.VsIntegration.Implementation.Install
 {
@@ -42,6 +43,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Install
 
             try
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 var window = dte.ItemOperations.Navigate(url, vsNavigateOptions.vsNavigateOptionsNewWindow);
                 window.Activate();
 
@@ -60,6 +63,8 @@ namespace TechTalk.SpecFlow.VsIntegration.Implementation.Install
 
             try
             {
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 window.Activate();
             }
             catch (Exception)
