@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    
+    xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
     xmlns:intellisensePresenter="clr-namespace:TechTalk.SpecFlow.VsIntegration.Implementation.AutoComplete.IntellisensePresenter"
     x:Class="TechTalk.SpecFlow.VsIntegration.Implementation.AutoComplete.IntellisensePresenter.CompletionSessionView"
     mc:Ignorable="d" MinWidth="400" MinHeight="20" MaxHeight="350" MaxWidth="800" d:DesignHeight="200" d:DesignWidth="300">
@@ -30,17 +30,45 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" Grid.Column="0" Background="White" BorderBrush="#FF828790" BorderThickness="1,1,1,0" Visibility="{Binding Session.SelectedCompletionSet.StatusText, Mode=OneWay, Converter={StaticResource ResourceKey=text2Visibility}}">
+        <Border Grid.Row="0" Grid.Column="0" Background="{DynamicResource {x:Static vsui:EnvironmentColors.EnvironmentBackgroundGradientBrushKey}}" BorderBrush="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowBorderBrushKey}}" BorderThickness="1,1,1,0" Visibility="{Binding Session.SelectedCompletionSet.StatusText, Mode=OneWay, Converter={StaticResource ResourceKey=text2Visibility}}">
             <TextBlock Text="{Binding Session.SelectedCompletionSet.StatusText, Mode=OneWay}" Padding="5,3,5,3" FontStyle="Italic" />
         </Border>
 
         <ListBox x:Name="listViewCompletions" Grid.Row="1" Grid.Column="0" 
-                     ItemTemplate="{DynamicResource ItemDataTemplate}"
+                 ItemTemplate="{DynamicResource ItemDataTemplate}"
                  ItemsSource="{Binding Session.SelectedCompletionSet.Completions}"               
                  MouseDoubleClick="ListView_MouseDoubleClick" 
                  SelectionChanged="ListView_SelectionChanged" 
                  MouseLeftButtonDown="listViewCompletions_MouseLeftButtonDown"
+                 KeyboardNavigation.DirectionalNavigation="Cycle"
+                 FontFamily="{DynamicResource VsFont.EnvironmentFontFamily}"
+                 Background="{DynamicResource {x:Static vsui:EnvironmentColors.EnvironmentBackgroundGradientBrushKey}}"
+                 Foreground="{DynamicResource {x:Static vsui:EnvironmentColors.ToolTipTextBrushKey}}"
+                 
                  ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                 ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border Name="_Border"
+                                Padding="2"
+                                SnapsToDevicePixels="true">
+                                    <ContentPresenter />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter TargetName="_Border" Property="Background" Value="{DynamicResource {x:Static vsui:EnvironmentColors.ComboBoxSelectionBrushKey}}"/>
+                                        <!--<Setter Property="Foreground" Value="{DynamicResource VsBrush.}"/>-->
+                                        <!--<Setter TargetName="_Border" Property="Opacity" Value="0.5" />-->
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            </ListBox>
     </Grid>
 </UserControl>
